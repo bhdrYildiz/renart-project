@@ -55,7 +55,6 @@ export default function Home() {
     }
   }, []);
 
-  // Sayfa ilk yüklendiğinde ürünleri getir (sadece bir kez)
   useEffect(() => {
     fetchProducts({
       minPrice: '',
@@ -96,7 +95,7 @@ export default function Home() {
       const touchEndX = e.changedTouches[0].clientX;
       const diff = touchStartX - touchEndX;
 
-      if (Math.abs(diff) > 50) { // minimum swipe distance
+      if (Math.abs(diff) > 50) {
         if (diff > 0) {
           nextSlide();
         } else {

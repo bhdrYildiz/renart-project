@@ -1,4 +1,3 @@
-// Altın fiyatını çekmek için servis
 export interface GoldPriceResponse {
   success: boolean;
   data: {
@@ -12,7 +11,6 @@ export interface GoldPriceResponse {
 
 export async function getGoldPrice(): Promise<number> {
   try {
-    // Daha güvenilir bir altın fiyatı API'si kullan
     const response = await fetch('https://api.coinbase.com/v2/exchange-rates?currency=XAU', {
       method: 'GET',
       headers: {
@@ -26,9 +24,7 @@ export async function getGoldPrice(): Promise<number> {
 
     const data = await response.json();
     
-    // Coinbase API'den gelen fiyatı USD/gram cinsinden döndür
-    // API USD/ounce cinsinden verir, gram'a çevirmek için 31.1035'e böleriz
-    const pricePerOunce = parseFloat(data.data.rates.USD) || 2000; // fallback değer
+    const pricePerOunce = parseFloat(data.data.rates.USD) || 2000;
     const pricePerGram = pricePerOunce / 31.1035;
     
     console.log('Altın fiyatı başarıyla çekildi:', pricePerGram, 'USD/gram');
@@ -36,7 +32,6 @@ export async function getGoldPrice(): Promise<number> {
   } catch (error) {
     console.error('Altın fiyatı çekilirken hata:', error);
     
-    // Alternatif API dene
     try {
       const response2 = await fetch('https://api.metals.live/v1/spot/gold', {
         method: 'GET',
@@ -56,26 +51,22 @@ export async function getGoldPrice(): Promise<number> {
       console.error('Alternatif API de başarısız:', error2);
     }
     
-    // Her iki API de başarısız olursa varsayılan değer döndür
     console.log('API\'ler başarısız, varsayılan değer kullanılıyor: 65 USD/gram');
     return 65;
   }
 }
 
-// Cache için basit bir in-memory cache
 let cachedGoldPrice: number | null = null;
 let cacheTimestamp: number = 0;
-const CACHE_DURATION = 5 * 60 * 1000; // 5 dakika
+const CACHE_DURATION = 5 * 60 * 1000;
 
 export async function getCachedGoldPrice(): Promise<number> {
   const now = Date.now();
   
-  // Cache hala geçerli mi kontrol et
   if (cachedGoldPrice && (now - cacheTimestamp) < CACHE_DURATION) {
     return cachedGoldPrice;
   }
   
-  // Yeni fiyat çek ve cache'le
   cachedGoldPrice = await getGoldPrice();
   cacheTimestamp = now;
   

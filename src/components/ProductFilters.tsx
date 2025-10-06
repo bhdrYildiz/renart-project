@@ -18,7 +18,6 @@ interface ProductFiltersProps {
 export default function ProductFilters({ onFiltersChange, isLoading, currentFilters }: ProductFiltersProps) {
     const [filters, setFilters] = useState<FilterState>(currentFilters);
 
-    // Ana sayfadan gelen filtreleri local state'e senkronize et
     useEffect(() => {
         setFilters(currentFilters);
     }, [currentFilters]);
@@ -26,12 +25,11 @@ export default function ProductFilters({ onFiltersChange, isLoading, currentFilt
     const handleFilterChange = (key: keyof FilterState, value: string) => {
         const newFilters = { ...filters, [key]: value };
         setFilters(newFilters);
-        // Sadece state'i güncelle, API çağrısı yapma
     };
     const handleQuickFilter = (key: keyof FilterState, value: string) => {
         const newFilters = { ...filters, [key]: value };
         setFilters(newFilters);
-        onFiltersChange(newFilters); // anında filtre uygula
+        onFiltersChange(newFilters);
     };
 
     const clearFilters = () => {

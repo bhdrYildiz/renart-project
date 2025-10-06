@@ -16,12 +16,10 @@ export interface ProductWithPrice extends Product {
   goldPrice: number;
 }
 
-// Fiyat hesaplama formülü: Price = (popularityScore + 1) * weight * goldPrice
 export function calculatePrice(popularityScore: number, weight: number, goldPrice: number): number {
   return (popularityScore + 1) * weight * goldPrice;
 }
 
-// Tüm ürünler için fiyat hesapla
 export async function calculateProductPrices(products: Product[]): Promise<ProductWithPrice[]> {
   const goldPrice = await getCachedGoldPrice();
   
@@ -32,7 +30,6 @@ export async function calculateProductPrices(products: Product[]): Promise<Produ
   }));
 }
 
-// Fiyatı USD formatında göster
 export function formatPrice(price: number): string {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',

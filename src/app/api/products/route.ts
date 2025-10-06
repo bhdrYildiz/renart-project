@@ -11,7 +11,6 @@ interface FilterParams {
 
 export async function GET(request: NextRequest) {
   try {
-    // URL'den filtre parametrelerini al
     const { searchParams } = new URL(request.url);
     const filters: FilterParams = {};
     
@@ -28,16 +27,12 @@ export async function GET(request: NextRequest) {
       filters.maxPopularity = parseFloat(searchParams.get('maxPopularity')!);
     }
 
-    // JSON dosyasından ürünleri al
     const products = productsData as Product[];
     
-    // Fiyatları hesapla
     const productsWithPrices = await calculateProductPrices(products);
     
-    // Filtreleri uygula
     let filteredProducts = productsWithPrices;
 
-    // Fiyat aralığı filtresi
     if (filters.minPrice !== undefined) {
       filteredProducts = filteredProducts.filter(product => product.price >= filters.minPrice!);
     }
@@ -45,13 +40,12 @@ export async function GET(request: NextRequest) {
       filteredProducts = filteredProducts.filter(product => product.price <= filters.maxPrice!);
     }
 
-    // Popülerlik puanı filtresi (5 üzerinden - frontend'ten gelen değerleri 0-1'e çevir)
     if (filters.minPopularity !== undefined) {
-      const minScore = filters.minPopularity / 5; // 5 üzerinden gelen değeri 0-1'e çevir
+      const minScore = filters.minPopularity / 5;
       filteredProducts = filteredProducts.filter(product => product.popularityScore >= minScore);
     }
     if (filters.maxPopularity !== undefined) {
-      const maxScore = filters.maxPopularity / 5; // 5 üzerinden gelen değeri 0-1'e çevir
+      const maxScore = filters.maxPopularity / 5;
       filteredProducts = filteredProducts.filter(product => product.popularityScore <= maxScore);
     }
 

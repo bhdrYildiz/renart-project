@@ -30,7 +30,6 @@ export default function ProductCard({ product }: ProductCardProps) {
     };
 
     const renderStars = (score: number) => {
-        // Score'u 5 üzerinden hesapla
         const starScore = score * 5;
         const fullStars = Math.floor(starScore);
         const hasHalfStar = starScore % 1 >= 0.5;
