@@ -30,7 +30,6 @@ export default function Home() {
     try {
       setLoading(true);
 
-      // URL parametrelerini oluştur
       const params = new URLSearchParams();
       if (filterParams.minPrice) params.append('minPrice', filterParams.minPrice);
       if (filterParams.maxPrice) params.append('maxPrice', filterParams.maxPrice);
