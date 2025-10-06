@@ -11,7 +11,7 @@ export interface GoldPriceResponse {
 
 export async function getGoldPrice(): Promise<number> {
   try {
-    const response = await fetch('https://api.coinbase.com/v2/exchange-rates?currency=XAU', {
+    const response = await fetch('https://api.metals.live/v1/spot/gold', {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -24,7 +24,7 @@ export async function getGoldPrice(): Promise<number> {
 
     const data = await response.json();
     
-    const pricePerOunce = parseFloat(data.data.rates.USD) || 2000;
+    const pricePerOunce = data.price || data.rates?.USD || 2000;
     const pricePerGram = pricePerOunce / 31.1035;
     
     console.log('Altın fiyatı başarıyla çekildi:', pricePerGram, 'USD/gram');
@@ -32,26 +32,7 @@ export async function getGoldPrice(): Promise<number> {
   } catch (error) {
     console.error('Altın fiyatı çekilirken hata:', error);
     
-    try {
-      const response2 = await fetch('https://api.metals.live/v1/spot/gold', {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-        },
-      });
-
-      if (response2.ok) {
-        const data2 = await response2.json();
-        const pricePerOunce = data2.price || data2.rates?.USD || 2000;
-        const pricePerGram = pricePerOunce / 31.1035;
-        console.log('Alternatif API ile altın fiyatı çekildi:', pricePerGram, 'USD/gram');
-        return pricePerGram;
-      }
-    } catch (error2) {
-      console.error('Alternatif API de başarısız:', error2);
-    }
-    
-    console.log('API\'ler başarısız, varsayılan değer kullanılıyor: 65 USD/gram');
+    console.log('API başarısız, sabit değer kullanılıyor: 65 USD/gram');
     return 65;
   }
 }
