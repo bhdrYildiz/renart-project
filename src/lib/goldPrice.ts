@@ -11,12 +11,32 @@ export interface GoldPriceResponse {
 }
 
 export async function getGoldPrice(): Promise<number> {
-  // Vercel deployment için sabit altın fiyatı kullan
-  // Gerçek uygulamada bu değer API'den çekilebilir
-  const currentGoldPricePerGram = 65; // USD/gram
-  
-  console.log('Altın fiyatı kullanılıyor:', currentGoldPricePerGram, 'USD/gram');
-  return currentGoldPricePerGram;
+  try {
+    // MetalAPI'den altın fiyatını çek
+    const response = await fetch('https://api.metals.live/v1/spot/gold', {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    
+    // API'den gelen fiyatı USD/gram cinsinden döndür
+    // API genellikle USD/ounce cinsinden verir, gram'a çevirmek için 31.1035'e böleriz
+    const pricePerOunce = data.price || data.rates?.USD || 2000; // fallback değer
+    const pricePerGram = pricePerOunce / 31.1035;
+    
+    return pricePerGram;
+  } catch (error) {
+    console.error('Altın fiyatı çekilirken hata:', error);
+    // Hata durumunda varsayılan değer döndür (yaklaşık 65 USD/gram)
+    return 65;
+  }
 }
 
 // Cache için basit bir in-memory cache
